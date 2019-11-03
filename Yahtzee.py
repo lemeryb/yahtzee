@@ -2,52 +2,82 @@
 # Yahtzee
 import random as rand
 
+# Sets a variable which tells the user how many times they've tried to roll the dice for the section they've decided to persue. (Ex: They rolled it once, they rolled it twice, now three times)
+attempts = 0
+
+# Sets a variable which is used for the program to discern how many sections are available for the user to go through.(Ex: Chance, three of a kind, four of a kind,etc.) This just tells us how many sections there will be.
+choices = 3
+# Declares a list which will be used to determine if the user has already completed this section in the past. (Ex: If the user already has their ones filled out they should not be able to fill it out again.)
+selected = [""]
+
+# Creates a list that is as big as how many sections that are available for the user to go through Ex: Chance, three of a kind, four of a kind,etc.)
+for i in range(choices):
+    selected.append("")
+
 
 def add_scores(ones, twos, threes, fours, fives, sixes, yahtzee, chance):
     total = ones + twos + threes + fours + fives + sixes + yahtzee + chance
-    return total
+    return (total)
 
 
 def welcome():
-    input("Hello do you want to play yahtzee?"
-          "press enter to play")
-    print("Your goal is to beat the score of 230 and get as many points as you can")
-    input("Press enter to roll the first 5 dice")
+    # start_game = int(input("Hello do you want to play yahtzee? (Press 1 to play or 2 to exit): "))
+    start_game = 1
+    if start_game == 1:
+        print("Beginning a game of Yahtzee..")
+        roll = [0, 0, 0, 0, 0]
+        play_game(roll)
+    else:
+        print("Exiting the game..")
+        exit()
 
 
-def play_game():
-    ones = 0
-    twos = 0
-    threes = 0
-    fours = 0
-    fives = 0
-    sixes = 0
-    yahtzee = 0
-    chance = 0
-    roll1 = rand.randint(1,6)
-    roll2 = rand.randint(1,6)
-    roll3 = rand.randint(1,6)
-    roll4 = rand.randint(1,6)
-    roll5 = rand.randint(1,6)
-    roll6 = rand.randint(1,6)
-    print(f"You rolled a {roll1}, a {roll2}, a {roll3}, a {roll4}, a {roll5}, and a {roll6}")
-    if roll1 == roll2 == roll3 == roll4 == roll5 == roll6:
-        print("Yahtzee that's 50 points!!")
-        yahtzee = 50
-    elif roll1 == roll2 == roll3 == roll4 == roll5 == 1 or roll2 == roll3 == roll4 == roll5 == roll6 == 1\
-            or roll3 == roll4 == roll5 == roll6 == roll1 == 1 or roll4 == roll5 == roll6 == roll1 == roll2 == 1 \
-            or roll5 == roll6 == roll1 == roll2 == roll3 == 1 or roll6 == roll1 == roll2 == roll3 == roll4 == 1:
-        print("That was a pretty good roll you got 5 1's")
-        answer = input("If you want to try and roll that last die again type Y or N")
-        if answer == "Y" and yahtzee == 0:
-            roll = rand.randint(1,6)
-            if roll == 1:
-                print("Yahtzee that's 50 points!!")
-                yahtzee = 50
+# Runs through a for loop and appends a random integer to each element in the list so that we know which values the user rolled.
+def roll_dice(roll):
+    for i in range(len(roll)):
+        roll[i] = rand.randint(1, 6)
+    print("You rolled " + str(roll))
 
 
+# Deals with each roll attempt to get better values in each section.
+def rolls_for_turn(roll):
+    global attempts
+    # Asks the user if they are happy with their score. If not, they are free to roll again.
+    final_score = int(input(
+        "Would you like to use all of the numbers you rolled for your turn?\nPress 1 to end the turn:\nPress 2 to reroll the dice: "))
+    if final_score == 1:
+        pass
+    # If the user chose to reroll make sure the user knows that they are using an additional attempt and reroll the dice. Rinse and repeat until attempt 3.
+    elif final_score == 2:
+        attempts +=1
+        print("Attempt: " + str(attempts)); roll_dice(roll)
+    return()
 
 
+def play_game(roll):
+
+    global attempts
+    attempts += 1
+    print("Attempt: " + str(attempts))
+
+    roll_dice(roll)
+    section_to_go_for = int(input("""Press 1 to go for your ones
+Press 2 to go for your twos
+Press 3 to go for your threes"""))
+
+    # Verifies that the user hasn't already previously chosen the same selection to go for.
+    if selected[section_to_go_for] == -1:
+        print("You already have a score for this section! Please select another option.")
+        play_game(roll)
+    elif selected[section_to_go_for] != -1:
+        choice = selected[section_to_go_for]
+        selected[section_to_go_for] = -1
+        while attempts < 3:
+            rolls_for_turn(roll,choice)
+
+
+welcome()
 
 
 def user_spreadsheet():
+    pass
